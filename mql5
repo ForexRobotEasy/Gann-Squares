@@ -1,0 +1,86 @@
+
+//+------------------------------------------------------------------+
+//|                                              Gann Squares.mq5     |
+//|                       Copyright 2022, forexroboteasy.com          |
+//|                                        Developed by Forex Robot Easy Team |
+//+------------------------------------------------------------------+
+#property copyright 'Copyright 2022, forexroboteasy.com'
+#property link      'www.forexroboteasy.com'
+#property version   '1.00'
+#property strict
+
+// Input parameters
+input int Square1 = 144; // Square number 1
+input int Square2 = 90;  // Square number 2
+input int Square3 = 52;  // Square number 3
+
+//+------------------------------------------------------------------+
+//| Custom indicator initialization function                         |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+   // Set indicator buffers
+   SetIndexStyle(0, DRAW_COLOR_LINE);
+   SetIndexBuffer(0, GannSquare(Square1));
+   SetIndexStyle(1, DRAW_COLOR_LINE);
+   SetIndexBuffer(1, GannSquare(Square2));
+   SetIndexStyle(2, DRAW_COLOR_LINE);
+   SetIndexBuffer(2, GannSquare(Square3));
+   
+   // Set indicator labels
+   ObjectCreate('label1', OBJ_LABEL, 0, 0, 0);
+   ObjectSetText('label1', 'Gann Square 1: ' + Square1, 10, 'Arial', clrBlue);
+   ObjectSet('label1', OBJPROP_CORNER, 0);
+   ObjectSet('label1', OBJPROP_XDISTANCE, 10);
+   ObjectSet('label1', OBJPROP_YDISTANCE, 10);
+   
+   ObjectCreate('label2', OBJ_LABEL, 0, 0, 0);
+   ObjectSetText('label2', 'Gann Square 2: ' + Square2, 10, 'Arial', clrRed);
+   ObjectSet('label2', OBJPROP_CORNER, 0);
+   ObjectSet('label2', OBJPROP_XDISTANCE, 10);
+   ObjectSet('label2', OBJPROP_YDISTANCE, 30);
+   
+   ObjectCreate('label3', OBJ_LABEL, 0, 0, 0);
+   ObjectSetText('label3', 'Gann Square 3: ' + Square3, 10, 'Arial', clrGreen);
+   ObjectSet('label3', OBJPROP_CORNER, 0);
+   ObjectSet('label3', OBJPROP_XDISTANCE, 10);
+   ObjectSet('label3', OBJPROP_YDISTANCE, 50);
+   
+   return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Custom indicator iteration function                              |
+//+------------------------------------------------------------------+
+int OnCalculate(const int rates_total, const int prev_calculated, const datetime &time[], const double &open[],
+                const double &high[], const double &low[], const double &close[], const long &tick_volume[],
+                const long &volume[], const int &spread[])
+{
+   // Calculate Gann Squares
+   for(int i = prev_calculated; i < rates_total; i++)
+   {
+      // Calculate Gann Square 1
+      double gannSquare1 = GannSquareValue(Square1, i);
+      IndicatorBuffer(0)[i] = gannSquare1;
+      
+      // Calculate Gann Square 2
+      double gannSquare2 = GannSquareValue(Square2, i);
+      IndicatorBuffer(1)[i] = gannSquare2;
+      
+      // Calculate Gann Square 3
+      double gannSquare3 = GannSquareValue(Square3, i);
+      IndicatorBuffer(2)[i] = gannSquare3;
+   }
+   
+   return(rates_total);
+}
+
+//+------------------------------------------------------------------+
+//| Custom function to calculate Gann Square                          |
+//+------------------------------------------------------------------+
+double GannSquareValue(int squareNumber, int index)
+{
+   double squareRoot = MathSqrt(squareNumber);
+   double squareValue = squareRoot * index;
+   return squareValue;
+}
